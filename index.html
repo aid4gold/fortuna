@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI gramotnost & Copilot v praxi – Kurzy pro MPSV</title>
+<style>
+  :root {
+    --blue: #0078d4;
+    --blue-dark: #005a9e;
+    --blue-light: #e8f4fd;
+    --teal: #0099bc;
+    --teal-dark: #007a96;
+    --teal-light: #e0f5f9;
+    --gold: #f5a623;
+    --gold-light: #fef5e7;
+    --green: #107c10;
+    --green-light: #e8f5e8;
+    --red: #d13438;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --gray-500: #6c757d;
+    --gray-700: #495057;
+    --gray-900: #212529;
+    --white: #ffffff;
+    --shadow: 0 4px 24px rgba(0,0,0,0.10);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--gray-900); background: var(--white); line-height: 1.6; }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 2rem;
+  }
+  .nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .nav-logo { font-weight: 700; font-size: 1rem; color: var(--blue); display: flex; align-items: center; gap: 8px; }
+  .nav-logo span { background: var(--blue); color: #fff; border-radius: 6px; padding: 3px 8px; font-size: 0.78rem; }
+  .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--gray-700); font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-cta { background: var(--blue); color: #fff; padding: 8px 20px; border-radius: 20px; font-size: 0.88rem; font-weight: 600; text-decoration: none; transition: background .2s; }
+  .nav-cta:hover { background: var(--blue-dark); }
+  @media(max-width:768px){ .nav-links { display: none; } }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #003875 0%, #0078d4 50%, #0099bc 100%);
+    color: #fff; padding: 80px 2rem 100px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 6px 16px; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 24px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; color: #7dd3fc; }
+  .hero-sub { font-size: 1.15rem; opacity: 0.9; max-width: 680px; margin-bottom: 40px; }
+  .hero-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 820px; }
+  @media(max-width:600px){ .hero-cards { grid-template-columns: 1fr; } }
+  .hero-card {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+    border-radius: var(--radius); padding: 22px 24px; cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .hero-card:hover { background: rgba(255,255,255,0.2); transform: translateY(-3px); }
+  .hero-card-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; opacity: 0.7; margin-bottom: 6px; text-transform: uppercase; }
+  .hero-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+  .hero-card-meta { display: flex; gap: 16px; font-size: 0.85rem; opacity: 0.85; }
+  .hero-card-meta span { display: flex; align-items: center; gap: 5px; }
+  .hero-scroll { margin-top: 60px; display: flex; align-items: center; gap: 12px; font-size: 0.88rem; opacity: 0.7; }
+  .hero-scroll::before { content: ''; display: block; width: 40px; height: 2px; background: rgba(255,255,255,0.5); }
+
+  /* ── SECTION WRAPPERS ── */
+  section { padding: 70px 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+  .section-title { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; margin-bottom: 16px; }
+  .section-sub { font-size: 1.05rem; color: var(--gray-500); max-width: 680px; margin-bottom: 48px; }
+
+  /* ── COURSE TABS ── */
+  .course-tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 40px; overflow-x: auto; }
+  .tab-btn {
+    padding: 14px 28px; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    border: none; background: none; color: var(--gray-500);
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    transition: color .2s, border-color .2s; white-space: nowrap;
+  }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab-btn:hover:not(.active) { color: var(--gray-900); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── COURSE HEADER STRIP ── */
+  .course-header {
+    border-radius: var(--radius); padding: 32px 36px; margin-bottom: 40px;
+    display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 24px;
+  }
+  .course-header.blue { background: linear-gradient(135deg, var(--blue-light) 0%, #dbeeff 100%); border-left: 5px solid var(--blue); }
+  .course-header.teal { background: linear-gradient(135deg, var(--teal-light) 0%, #cceef5 100%); border-left: 5px solid var(--teal); }
+  .course-header h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; }
+  .course-header.blue h2 { color: var(--blue-dark); }
+  .course-header.teal h2 { color: var(--teal-dark); }
+  .course-header p { color: var(--gray-700); font-size: 0.97rem; max-width: 600px; }
+  .course-badge-big {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100px; height: 100px; border-radius: 50%; font-weight: 800; text-align: center;
+    flex-shrink: 0;
+  }
+  .course-badge-big.blue { background: var(--blue); color: #fff; }
+  .course-badge-big.teal { background: var(--teal); color: #fff; }
+  .course-badge-big .hours { font-size: 2rem; line-height: 1; }
+  .course-badge-big .hours-label { font-size: 0.72rem; opacity: 0.85; }
+  @media(max-width:600px){ .course-header { grid-template-columns: 1fr; } .course-badge-big { width: 72px; height: 72px; } .course-badge-big .hours { font-size: 1.5rem; } }
+
+  /* ── TARGET AUDIENCE ── */
+  .audience-box { background: var(--gray-100); border-radius: var(--radius-sm); padding: 20px 24px; margin-bottom: 36px; display: flex; gap: 16px; align-items: flex-start; }
+  .audience-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .audience-box h4 { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gray-500); margin-bottom: 6px; }
+  .audience-box p { font-size: 0.95rem; color: var(--gray-700); }
+
+  /* ── OBJECTIVES GRID ── */
+  .objectives-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 48px; }
+  .objective-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 20px; display: flex; gap: 14px; }
+  .objective-num { font-size: 1.4rem; font-weight: 800; color: var(--gray-200); flex-shrink: 0; line-height: 1.2; }
+  .objective-card p { font-size: 0.92rem; color: var(--gray-700); line-height: 1.55; }
+
+  /* ── MODULES ── */
+  .modules-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--gray-900); }
+  .module-card { border-radius: var(--radius); border: 1px solid var(--gray-200); margin-bottom: 16px; overflow: hidden; }
+  .module-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px; cursor: pointer; background: var(--white);
+    transition: background .15s; user-select: none;
+  }
+  .module-header:hover { background: var(--gray-100); }
+  .module-num { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; flex-shrink: 0; }
+  .blue .module-num { background: var(--blue-light); color: var(--blue-dark); }
+  .teal .module-num { background: var(--teal-light); color: var(--teal-dark); }
+  .module-info { flex: 1; }
+  .module-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+  .module-meta { display: flex; gap: 16px; }
+  .module-time { font-size: 0.82rem; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+  .blue .module-time { background: var(--blue-light); color: var(--blue-dark); }
+  .teal .module-time { background: var(--teal-light); color: var(--teal-dark); }
+  .module-toggle { font-size: 1.2rem; color: var(--gray-500); transition: transform .25s; flex-shrink: 0; }
+  .module-card.open .module-toggle { transform: rotate(180deg); }
+
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--gray-200); background: var(--white); }
+  .module-card.open .module-body { display: block; }
+
+  .module-section { margin-top: 22px; }
+  .module-section-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--gray-200); }
+  .blue .module-section-title { color: var(--blue); }
+  .teal .module-section-title { color: var(--teal); }
+
+  .outcome-box { background: var(--green-light); border-left: 4px solid var(--green); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 14px 18px; margin-top: 22px; }
+  .outcome-box strong { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+  .outcome-box p { font-size: 0.93rem; color: var(--gray-700); }
+
+  ul.content-list { list-style: none; }
+  ul.content-list li { position: relative; padding-left: 20px; font-size: 0.93rem; color: var(--gray-700); margin-bottom: 8px; line-height: 1.55; }
+  ul.content-list li::before { content: '→'; position: absolute; left: 0; color: var(--blue); font-weight: 700; }
+  .teal ul.content-list li::before { color: var(--teal); }
+
+  ul.activity-list { list-style: none; }
+  ul.activity-list li { position: relative; padding-left: 22px; font-size: 0.93rem; color: var(--gray-700); margin-bottom: 8px; line-height: 1.55; }
+  ul.activity-list li::before { content: '◆'; position: absolute; left: 0; font-size: 0.55rem; top: 6px; color: var(--gold); }
+
+  .verify-box { background: var(--gold-light); border-left: 4px solid var(--gold); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 14px 18px; margin-top: 8px; }
+  .verify-box strong { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #b37d00; margin-bottom: 6px; }
+  .verify-box p { font-size: 0.93rem; color: var(--gray-700); }
+
+  /* ── TIMELINE STRIP ── */
+  .timeline-strip { background: var(--gray-100); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 48px; }
+  .timeline-strip h4 { font-size: 0.85rem; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+  .timeline-row { display: flex; gap: 0; align-items: stretch; overflow-x: auto; padding-bottom: 4px; }
+  .timeline-block {
+    display: flex; flex-direction: column; align-items: center; min-width: 130px;
+    position: relative;
+  }
+  .timeline-block:not(:last-child)::after {
+    content: ''; position: absolute; top: 20px; left: 50%; right: -50%;
+    height: 3px; background: var(--gray-300); z-index: 0;
+  }
+  .timeline-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; z-index: 1; position: relative; margin-bottom: 10px; }
+  .tl-blue .timeline-dot { background: var(--blue); color: #fff; }
+  .tl-teal .timeline-dot { background: var(--teal); color: #fff; }
+  .timeline-label { font-size: 0.78rem; font-weight: 600; text-align: center; color: var(--gray-700); line-height: 1.3; max-width: 110px; }
+  .timeline-time { font-size: 0.72rem; color: var(--gray-500); margin-top: 4px; }
+
+  /* ── SKILLS SECTION ── */
+  .skills-bg { background: var(--gray-100); }
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .skill-tag { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 0.88rem; font-weight: 600; color: var(--gray-700); display: flex; align-items: center; gap: 10px; }
+  .skill-tag .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .skill-tag .dot.blue { background: var(--blue); }
+  .skill-tag .dot.teal { background: var(--teal); }
+  .skill-tag .dot.both { background: linear-gradient(90deg, var(--blue) 50%, var(--teal) 50%); }
+
+  /* ── INFO BOXES ── */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 16px; }
+  .info-card { border-radius: var(--radius-sm); padding: 24px; border: 1px solid var(--gray-200); }
+  .info-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 10px; }
+  .info-card ul { list-style: none; }
+  .info-card ul li { font-size: 0.88rem; color: var(--gray-700); padding: 5px 0; border-bottom: 1px solid var(--gray-100); display: flex; align-items: flex-start; gap: 8px; }
+  .info-card ul li:last-child { border-bottom: none; }
+  .info-card ul li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+  /* ── ACCREDITATION SECTION ── */
+  .accreditation-bg { background: linear-gradient(135deg, #003875, #0055a5); color: #fff; }
+  .accreditation-bg .section-label { color: #7dd3fc; }
+  .accreditation-bg .section-title { color: #fff; }
+  .accreditation-bg .section-sub { color: rgba(255,255,255,0.8); }
+  .akris-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+  .akris-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius-sm); padding: 22px; }
+  .akris-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: #7dd3fc; }
+  .akris-card p { font-size: 0.88rem; opacity: 0.85; line-height: 1.55; }
+
+  /* ── CTA ── */
+  .cta-section { background: linear-gradient(135deg, var(--blue) 0%, var(--teal) 100%); color: #fff; text-align: center; padding: 80px 2rem; }
+  .cta-section h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; }
+  .cta-section p { font-size: 1.1rem; opacity: 0.9; max-width: 560px; margin: 0 auto 40px; }
+  .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: #fff; color: var(--blue); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none; transition: transform .2s, box-shadow .2s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .btn-outline { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.6); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none; transition: border-color .2s, background .2s; }
+  .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+  /* ── FOOTER ── */
+  footer { background: var(--gray-900); color: rgba(255,255,255,0.5); text-align: center; padding: 28px 2rem; font-size: 0.84rem; }
+  footer strong { color: rgba(255,255,255,0.8); }
+
+  /* ── UTILITY ── */
+  .divider { height: 1px; background: var(--gray-200); margin: 48px 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media(max-width:700px){ .two-col { grid-template-columns: 1fr; } }
+  .highlight-pill { display: inline-block; font-size: 0.78rem; font-weight: 700; border-radius: 12px; padding: 3px 12px; margin: 3px 4px 3px 0; }
+  .pill-blue { background: var(--blue-light); color: var(--blue-dark); }
+  .pill-teal { background: var(--teal-light); color: var(--teal-dark); }
+  .pill-gold { background: var(--gold-light); color: #8a5e00; }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo"><span>MPSV</span> AI Vzdělávání</div>
+    <ul class="nav-links">
+      <li><a href="#kurzy">Kurzy</a></li>
+      <li><a href="#kompetence">Kompetence</a></li>
+      <li><a href="#akreditace">Akreditace</a></li>
+      <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    <a href="#kontakt" class="nav-cta">Přihlásit se</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🇨🇿 Akreditované kurzy MPSV &nbsp;·&nbsp; Microsoft Copilot &nbsp;·&nbsp; Generativní AI</div>
+    <h1>Zvládněte <em>AI a Copilot</em><br>v prostředí veřejné správy</h1>
+    <p class="hero-sub">Dva praktické kurzy navržené přesně pro potřeby úředníků, sociálních pracovníků a analytik veřejného sektoru. Bezpečně, efektivně a v souladu s ochranou dat.</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="document.getElementById('kurzy').scrollIntoView({behavior:'smooth'})">
+        <div class="hero-card-label">Kurz pro začátečníky</div>
+        <h3>AI gramotnost a Copilot v praxi</h3>
+        <div class="hero-card-meta">
+          <span>⏱ 8 hodin</span>
+          <span>📅 1 den</span>
+          <span>👥 5 modulů</span>
+        </div>
+      </div>
+      <div class="hero-card" onclick="document.getElementById('kurzy').scrollIntoView({behavior:'smooth'})">
+        <div class="hero-card-label">Kurz pro pokročilé</div>
+        <h3>AI analytik a designér procesů</h3>
+        <div class="hero-card-meta">
+          <span>⏱ 4 hodiny</span>
+          <span>📅 0,5 dne</span>
+          <span>👥 4 moduly</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">Přejděte dolů pro detailní obsah kurzů</div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section id="kurzy">
+  <div class="section-inner">
+    <div class="section-label">Obsah kurzů</div>
+    <h2 class="section-title">Detailní sylabus obou kurzů</h2>
+    <p class="section-sub">Klikněte na záložku pro zobrazení kurzu. Každý modul lze rozbalit pro kompletní popis obsahu, aktivit a způsobu ověření znalostí.</p>
+
+    <div class="course-tabs">
+      <button class="tab-btn active" onclick="switchTab('beginner', this)">📘 AI gramotnost a Copilot v praxi (8 h)</button>
+      <button class="tab-btn" onclick="switchTab('advanced', this)">📗 AI analytik a designér procesů (4 h)</button>
+    </div>
+
+    <!-- ═══ BEGINNER TAB ═══ -->
+    <div id="tab-beginner" class="tab-panel active blue">
+
+      <div class="course-header blue">
+        <div>
+          <h2>AI gramotnost a Copilot v praxi</h2>
+          <p>Základní kurz určený pro úředníky, sociální pracovníky a administrativní pracovníky v resortu práce a sociálních věcí. Účastníci získají praktické dovednosti pro každodenní bezpečné a efektivní využívání Microsoft Copilotu.</p>
+          <div style="margin-top:14px">
+            <span class="highlight-pill pill-blue">5 modulů</span>
+            <span class="highlight-pill pill-blue">Prezenční výuka</span>
+            <span class="highlight-pill pill-gold">Akreditace MPSV / AKRIS</span>
+          </div>
+        </div>
+        <div class="course-badge-big blue">
+          <div class="hours">8h</div>
+          <div class="hours-label">1 den výuky</div>
+        </div>
+      </div>
+
+      <div class="audience-box">
+        <div class="audience-icon">👥</div>
+        <div>
+          <h4>Cílová skupina</h4>
+          <p>Úředníci, sociální pracovníci, administrativní pracovníci v resortu práce a sociálních věcí a v souvisejících organizacích. Nevyžadují se žádné předchozí znalosti umělé inteligence.</p>
+        </div>
+      </div>
+
+      <div class="timeline-strip">
+        <h4>Přehled časového rozvržení</h4>
+        <div class="timeline-row">
+          <div class="timeline-block tl-blue">
+            <div class="timeline-dot">M1</div>
+            <div class="timeline-label">Úvod a bezpečné základy</div>
+            <div class="timeline-time">1 hodina</div>
+          </div>
+          <div class="timeline-block tl-blue">
+            <div class="timeline-dot">M2</div>
+            <div class="timeline-label">Psychologie a technika promptování</div>
+            <div class="timeline-time">2 hodiny</div>
+          </div>
+          <div class="timeline-block tl-blue">
+            <div class="timeline-dot">M3</div>
+            <div class="timeline-label">Práce s informacemi a rešerše</div>
+            <div class="timeline-time">2 hodiny</div>
+          </div>
+          <div class="timeline-block tl-blue">
+            <div class="timeline-dot">M4</div>
+            <div class="timeline-label">Administrativní efektivita</div>
+            <div class="timeline-time">2 hodiny</div>
+          </div>
+          <div class="timeline-block tl-blue">
+            <div class="timeline-dot">M5</div>
+            <div class="timeline-label">Závěrečný workshop a etika</div>
+            <div class="timeline-time">1 hodina</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-bottom:8px">Hlavní cíle kurzu</div>
+      <div class="objectives-grid" style="margin-bottom:40px">
+        <div class="objective-card"><div class="objective-num">01</div><p>Základně porozumět principu generativní AI a tomu, jak funguje Copilot v prostředí webu a prohlížeče Microsoft Edge.</p></div>
+        <div class="objective-card"><div class="objective-num">02</div><p>Bezpečně a v souladu s ochranou osobních údajů využívat Copilot s přihlášením přes pracovní účet (Entra ID) a s ochranou Commercial/Enterprise Data Protection.</p></div>
+        <div class="objective-card"><div class="objective-num">03</div><p>Umět formulovat kvalitní prompty podle metody 4 pilířů a vést iterativní dialog s AI.</p></div>
+        <div class="objective-card"><div class="objective-num">04</div><p>Umět použít Copilot k analýze dokumentů (PDF, webové stránky, videa) a ověřovat informace pomocí citací a primárních zdrojů.</p></div>
+        <div class="objective-card"><div class="objective-num">05</div><p>Zvýšit administrativní efektivitu při tvorbě textů, šablon a odpovědí klientům při zachování zásady „human-in-the-loop".</p></div>
+      </div>
+
+      <div class="modules-title">📂 Detailní obsah modulů – klikněte pro rozbalení</div>
+
+      <!-- M1 -->
+      <div class="module-card" id="m1">
+        <div class="module-header" onclick="toggleModule('m1')">
+          <div class="module-num">1</div>
+          <div class="module-info">
+            <div class="module-title">Modul 1: Úvod a bezpečné základy</div>
+            <div class="module-meta"><span class="module-time">⏱ 1 hodina</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník vysvětlí základní princip generativní AI a popíše, jak je v Copilotu chráněna data organizace. Rozliší situace, kdy je použití Copilotu vhodné a kdy naopak rizikové.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list">
+              <li><strong>Generativní AI a velké jazykové modely (LLM):</strong> Co je generativní AI, proč AI „nedokáže myslet" jako člověk – predikce dalšího tokenu, pravděpodobnostní model. Stručný historický kontext a srovnání s tradičním softwarem.</li>
+              <li><strong>Prostředí Microsoft Copilot:</strong> Přehled rozhraní v prohlížeči Edge a na webu copilot.microsoft.com – chat, přístup k internetu, využití kontextu stránky. Rozdíl mezi jednotlivými verzemi Copilotu.</li>
+              <li><strong>Bezpečnost dat a Commercial Data Protection:</strong> Klíčový rozdíl mezi veřejným konzumním použitím AI a podnikovou službou Copilot s komerční/podnikovou ochranou dat. Vysvětlení pojmu „Commercial Data Protection" – data nejsou ukládána pro trénink modelu, bez přístupu Microsoftu k obsahu („no eyes-on").</li>
+              <li><strong>Základní pravidla bezpečného používání:</strong> Co do AI nikdy nevkládat – osobní údaje klientů, citlivé údaje, rodná čísla, interní identifikátory, neveřejné dokumenty bez jasného právního rámce. Praktická kontrolní řada otázek před každým použitím.</li>
+              <li><strong>Přihlášení přes Entra ID:</strong> Praktická ukázka přihlášení pomocí M365 účtu. Jak ověřit, že jste přihlášeni v chráněném režimu – ikona zámku, popisek „Commercial data protection", přepínač profilu v Edge.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Interaktivní diskuse:</strong> Sběr obav a očekávání od AI. Krátké hlasování (např. Mentimeter nebo ruce) o největším vnímaném riziku při práci s AI.</li>
+              <li><strong>Demonstrační ukázka:</strong> Lektor v reálném čase ukáže přihlášení do Copilotu v Edge a vysvětlí každý prvek rozhraní. Účastníci sledují a paralelně provádějí stejné kroky na svých zařízeních.</li>
+              <li><strong>Skupinová aktivita – kategorizace dat:</strong> Účastníci v malých skupinách rozřazují 15 příkladů informací (rodné číslo, jméno klienta, výše dávky, obecný dotaz na legislativu, anonymizovaná statistika…) do kategorií „vhodné / nevhodné / záleží na kontextu". Společná reflexe výsledků.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Vstupní kvíz (3–5 otázek)</strong>
+              <p>Krátkodobý formativní test na odlišení základních pojmů: LLM vs. klasický algoritmus, generativní AI vs. analytická AI, Commercial Data Protection vs. veřejná verze Copilotu, identifikace rizikových typů dat. Výsledky slouží k přizpůsobení tempa výuky skupině.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M2 -->
+      <div class="module-card" id="m2">
+        <div class="module-header" onclick="toggleModule('m2')">
+          <div class="module-num">2</div>
+          <div class="module-info">
+            <div class="module-title">Modul 2: Psychologie a technika promptování</div>
+            <div class="module-meta"><span class="module-time">⏱ 2 hodiny</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník samostatně sestaví zadání pro Copilot ve struktuře Role – Kontext – Úkol – Formát a dokáže na základě první odpovědi AI položit doplňující nebo korigující otázky k dosažení požadovaného výsledku.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list">
+              <li><strong>AI jako spolupracovník – změna myšlenkového rámce:</strong> Proč je nutné AI zadávat jasnou roli, kontext a očekávaný výstup. Analogie s delegováním úkolu novému kolegovi – čím přesnější zadání, tím lepší výsledek.</li>
+              <li><strong>Metoda 4 pilířů (Role – Kontext – Úkol – Formát):</strong> Detailní vysvětlení každého pilíře s příklady z agendy sociálních dávek a sociálních služeb. Jak kombinovat všechny čtyři pilíře v jednom promptu. Srovnání výsledků promptu bez struktury a se strukturou 4P.</li>
+              <li><strong>Praktické příklady promptů pro veřejnou správu:</strong>
+                <ul style="margin-top:8px; padding-left:16px; list-style:disc; color:var(--gray-700); font-size:0.9rem; line-height:1.7">
+                  <li>Vysvětlení zamítavého rozhodnutí klientovi s omezenou digitální gramotností (Easy-to-read styl, jazyková úroveň A2–B1)</li>
+                  <li>Sestavení osnovy odpovědi na stížnost – formální, empatická, věcná</li>
+                  <li>Příprava krátké informační zprávy pro vedení odboru v rozsahu max. 1 strany A4</li>
+                  <li>Přeformulování odborného textu do srozumitelné formy pro veřejnost</li>
+                </ul>
+              </li>
+              <li><strong>Iterativní dialog s AI:</strong> Jak pracovat s první odpovědí – dopřesňování, korekce tónu (empatičtější vs. formální), žádost o kratší/delší verzi, přeformulování v jiném stylu. Technika „follow-up" dotazů.</li>
+              <li><strong>Nejčastější chyby a jak se jim vyhnout:</strong> Příliš obecné dotazy bez kontextu. Chybějící upřesnění cílové skupiny nebo formátu. Více nesouvisejících otázek v jednom promptu. Nerealistická očekávání od AI (faktická přesnost, právní jistota). Absence ověření výstupu.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Demonstrace špatný vs. dobrý prompt:</strong> Lektor živě zadá 3 verze téhož úkolu – vágní, středně dobrý, excelentní. Skupina analyzuje rozdíly ve výstupech a diskutuje, proč vznikly.</li>
+              <li><strong>Práce ve dvojicích – tvorba promptů:</strong> Každá dvojice obdrží modelovou situaci ze sociální agendy (např. „klient chce vědět, proč nedostal příspěvek na bydlení"). Vytvoří 2 varianty promptu, otestují je v Copilotu a porovnají výsledky. Prezentují ostatním.</li>
+              <li><strong>Společná reflexe a sdílení:</strong> Účastníci sdílí příklady promptů, které v jejich praxi fungují nebo naopak selhaly. Lektor komentuje a doplňuje tipy.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Praktický úkol – „Ideální prompt"</strong>
+              <p>Každý účastník individuálně odevzdá jeden prompt sestavený podle metody 4 pilířů pro konkrétní situaci ze své vlastní agendy (např. odpověď na dotaz klienta, shrnutí dokumentu pro kolegu, příprava interní zprávy). Prompt je hodnocen lektorem s písemnou zpětnou vazbou.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M3 -->
+      <div class="module-card" id="m3">
+        <div class="module-header" onclick="toggleModule('m3')">
+          <div class="module-num">3</div>
+          <div class="module-info">
+            <div class="module-title">Modul 3: Práce s informacemi a rešerše</div>
+            <div class="module-meta"><span class="module-time">⏱ 2 hodiny</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník umí využít Copilot v Edge k sumarizaci a vysvětlení obsahu PDF dokumentů, webových stránek a vybraných videí. Dokáže zkontrolovat citace a ověřit si důležité informace v primárních zdrojích. Rozliší spolehlivé a nespolehlivé výstupy AI.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list">
+              <li><strong>Funkce Copilot v Edge – postranní panel:</strong> Shrnutí webových stránek v jednom kliknutí. Kladení otázek k aktuálně otevřené stránce (kontextové dotazy). Shrnutí PDF dokumentů – jak správně načíst soubor. Shrnutí obsahu videí na YouTube (kde je tato funkce podporována). Přepínání mezi různými režimy panelu.</li>
+              <li><strong>Praktická ukázka s dokumenty MPSV:</strong> Jak načíst veřejně dostupnou koncepci MPSV (formát PDF) a nechat si ji Copilotem shrnout do strukturovaných bodů. Objasnění klíčových pojmů a vztahů v dokumentu. Porovnání dvou dokumentů – např. metodika před a po revizi.</li>
+              <li><strong>Práce s citacemi a ověřování zdrojů:</strong> Jak číst a rozklikávat citace, které Copilot uvádí. Jak porovnat interpretaci AI se skutečným textem primárního zdroje. Proč je ověření zdrojů povinnou součástí každé práce s AI výstupy.</li>
+              <li><strong>Prevence a rozpoznání „halucinací":</strong> Proč AI někdy vymýšlí neexistující informace, citace nebo právní ustanovení. Jak klást kontrolní otázky: „Ukaž přesnou citaci v dokumentu", „Z jakého zdroje tato informace pochází?", „Je tato informace v dokumentu, nebo je to tvůj závěr?" Vizuální rozlišení: co AI fakticky cituje vs. co interpretuje nebo domýšlí.</li>
+              <li><strong>Srovnávací úlohy pro praxi:</strong> Zadání typu „Porovnej tyto dva texty a vypiš hlavní rozdíly v podmínkách nároku." Příklady pro srovnání změn v metodice nebo vyhlášce. Jak strukturovat výstup pro přehledné použití ve výkonu.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Skupinová práce s reálnými dokumenty MPSV:</strong> Lektor vybere 1–2 veřejně dostupné dokumenty (koncepce, metodické doporučení). Skupiny pracují s jejich shrnutím v Copilotu v Edge, porovnávají výstupy a diskutují o odlišnostech.</li>
+              <li><strong>Ověřovací otázky v praxi:</strong> Účastníci si zkouší klást doplňující a ověřovací otázky tak, aby odhalili případné nepřesnosti nebo halucinace v odpovědi AI. Simulace situace „lektor záměrně zadal dokument, který AI část halucinuje".</li>
+              <li><strong>Skupinová diskuse o hranicích AI:</strong> Kde je hranice mezi „pomocník pro pochopení dokumentu" a „automatické nahrazení vlastní analýzy"? Co je a není zodpovědností pracovníka vs. AI.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Praktický test – Analýza změn metodiky</strong>
+              <p>Účastníci obdrží krátký úryvek metodiky MPSV a požadavek: „Ve 3 bodech vysvětli, co se změnilo oproti předchozí verzi." Využijí Copilot, ale povinně doplní vlastní kontrolu zdrojů a označí, co AI cituje přímo vs. co interpretuje. Výstup prezentují trojici kolegů.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M4 -->
+      <div class="module-card" id="m4">
+        <div class="module-header" onclick="toggleModule('m4')">
+          <div class="module-num">4</div>
+          <div class="module-info">
+            <div class="module-title">Modul 4: Administrativní efektivita a tvorba obsahu</div>
+            <div class="module-meta"><span class="module-time">⏱ 2 hodiny</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník umí s pomocí Copilotu transformovat úřední text do srozumitelnější podoby pro klienta, připravit základní šablonu zápisu či projektu a vygenerovat návrh empatické odpovědi na náročný e-mail – kterou následně zkontroluje a upraví.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list">
+              <li><strong>Zjednodušování úředních textů:</strong> Technika transformace složitého úředního jazyka do srozumitelné „lidštiny". Easy-to-read forma pro klienty se specifickými potřebami (senioři, osoby s nízkou gramotností, cizinci). Jak zadat požadavek na konkrétní jazykovou úroveň (A1–B2). Uchování právní přesnosti při zjednodušení.</li>
+              <li><strong>Tvorba šablon a strukturovaných dokumentů:</strong> Osnovy zápisů z jednání – co musí obsahovat, jak je strukturovat. Struktury zadávací dokumentace nebo projektového záměru. Šablony krátké analýzy nebo informační zprávy pro vedení. Jak uložit a opakovaně používat ověřené prompty jako „promptové šablony".</li>
+              <li><strong>Komunikace s klienty – empatické odpovědi:</strong> Generování návrhů odpovědí na krizové e-maily, stížnosti a dotazy občanů. Jak zadat parametry: empatický tón, jasná struktura, konkrétní informace, právně bezpečný jazyk. Jak upravit AI výstup tak, aby odpovídal osobnímu stylu pracovníka a realitě situace. Technika „tříkrokové kontroly": věcná správnost → tón → formální požadavky.</li>
+              <li><strong>Funkce „Compose" (Psaní) v Edge:</strong> Volba tónu výstupu – formální, neutrální, přátelský, profesionální. Délka textu – stručné shrnutí vs. detailní zpráva. Formát výstupu – e-mail, blog, body, odstavce. Jak využít „Compose" na obsahu aktuálně otevřené stránky nebo dokumentu.</li>
+              <li><strong>Princip „kopilot, ne kapitán":</strong> Proč AI nikdy automaticky neodesílá odpověď bez kontroly člověkem. Odpovědnost za finální dokument zůstává na pracovníkovi vždy. Jak pracovat s AI tak, aby zrychlovala, ale nenahrazovala úsudek.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Práce s vlastními texty účastníků:</strong> Účastníci přinesou (nebo napíší na místě) anonymizované příklady vlastních textů – dopisy, e-maily, interní sdělení. S pomocí lektora a Copilotu je přepracují a porovnávají výsledky.</li>
+              <li><strong>Tvorba šablony zápisu:</strong> Skupinová aktivita: skupiny navrhnou šablonu „zápisu z případové konference" nebo „stručné zprávy pro vedení" s využitím Copilotu. Skupiny vzájemně hodnotí výsledky.</li>
+              <li><strong>Reflexe časové úspory:</strong> Strukturovaná reflexe: kde mi Copilot ušetřil čas? Kde jsem naopak musel výrazně zasahovat a proč? Diskuse o realistickém očekávání a obavách.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Individuální úkol – „Před a Po"</strong>
+              <p>Každý účastník připraví jeden příklad s porovnáním: původní úřední verze textu vs. verze upravená s pomocí Copilotu. K výstupu přiloží stručný komentář: jaký prompt použil, co musel ručně opravit a proč, jak text zkrátil nebo zpřehlednil. Odevzdá jako podklad pro hodnocení kurzu.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M5 -->
+      <div class="module-card" id="m5">
+        <div class="module-header" onclick="toggleModule('m5')">
+          <div class="module-num">5</div>
+          <div class="module-info">
+            <div class="module-title">Modul 5: Závěrečný workshop a etika</div>
+            <div class="module-meta"><span class="module-time">⏱ 1 hodina</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník si uvědomuje své kompetence a odpovědnost při využívání AI. Umí popsat základní etická a právní rizika včetně autorských práv a odpovědnosti za výstupy AI v prostředí veřejné správy.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list">
+              <li><strong>Závěrečný praktický úkol:</strong> Každý účastník obdrží modelovou situaci (např. „Shrň 20stránkový koncepční materiál do 5 bodů pro radního s doporučením, jak reagovat na hlavní výzvy"). S využitím Copilotu vytvoří návrh výstupu, který pak prezentuje skupině.</li>
+              <li><strong>Etika používání AI ve veřejné správě:</strong> Princip odpovědnosti: člověk je vždy odpovědný za finální dokument a rozhodnutí – AI není právní subjekt. Riziko předsudků a zkreslení ve výstupech AI – jak vznikají, jak je minimalizovat. Potřeba kritického myšlení a profesního úsudku při práci s AI. Transparentnost: kdy a jak informovat klienty nebo kolegy o využití AI při tvorbě dokumentu.</li>
+              <li><strong>Autorská práva a AI:</strong> Kdo je autorem textu vytvořeného s pomocí AI? Jak nakládat s výstupy AI ve veřejné správě. Proč je třeba citovat zdroje, pokud Copilot využívá externí texty. Aktuální legislativní rámec v EU (AI Act) a jeho dopad na veřejný sektor.</li>
+              <li><strong>Plán dalšího rozvoje:</strong> Doporučené zdroje pro samostatné vzdělávání. Návrh „30denního plánu" pro implementaci Copilotu do každodenní práce. Komunity praxe a sdílení příkladů v resortu.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Samostatná práce na modelové situaci:</strong> Individuální tvorba výstupu s Copilotem podle zadání lektora, následovaná krátkou (2minutovou) prezentací řešení ve skupině. Vzájemná zpětná vazba.</li>
+              <li><strong>Diskusní kolo – „Co udělám jinak":</strong> Každý účastník pojmenuje konkrétní 1–2 kroky, které chce vyzkoušet v praxi do 2 týdnů. Zapisuje se do sdíleného dokumentu / flip chartu jako „závazek k akci".</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Závěrečné hodnocení</strong>
+              <p>Hodnocení závěrečného praktického úkolu lektorem podle tří kritérií: (1) srozumitelnost a struktura výstupu, (2) věcná správnost a relevance, (3) vhodné a bezpečné použití Copilotu. Dále dotazník zpětné vazby na kurz v souladu s požadavky MPSV na hodnocení akreditovaných programů.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /tab-beginner -->
+
+    <!-- ═══ ADVANCED TAB ═══ -->
+    <div id="tab-advanced" class="tab-panel teal">
+
+      <div class="course-header teal">
+        <div>
+          <h2>AI analytik a designér procesů</h2>
+          <p>Pokročilý kurz pro vedoucí pracovníky, analytiky, IT metodiky a pracovníky pověřené zaváděním AI nástrojů. Zaměřen na pokročilý prompt engineering, práci s daty a strategii implementace AI ve veřejném sektoru.</p>
+          <div style="margin-top:14px">
+            <span class="highlight-pill pill-teal">4 moduly</span>
+            <span class="highlight-pill pill-teal">Navazuje na kurz AI gramotnost</span>
+            <span class="highlight-pill pill-gold">Akreditace MPSV / AKRIS</span>
+          </div>
+        </div>
+        <div class="course-badge-big teal">
+          <div class="hours">4h</div>
+          <div class="hours-label">0,5 dne výuky</div>
+        </div>
+      </div>
+
+      <div class="audience-box">
+        <div class="audience-icon">🧑‍💼</div>
+        <div>
+          <h4>Cílová skupina</h4>
+          <p>Vedoucí pracovníci, analytici, IT metodici, pracovníci pověření zaváděním AI nástrojů na úrovni odboru nebo celé organizace. Předpoklad: absolvování kurzu AI gramotnost nebo ekvivalentní znalosti.</p>
+        </div>
+      </div>
+
+      <div class="timeline-strip">
+        <h4>Přehled časového rozvržení</h4>
+        <div class="timeline-row">
+          <div class="timeline-block tl-teal">
+            <div class="timeline-dot">M1</div>
+            <div class="timeline-label">Pokročilý Prompt Engineering</div>
+            <div class="timeline-time">1 hodina</div>
+          </div>
+          <div class="timeline-block tl-teal">
+            <div class="timeline-dot">M2</div>
+            <div class="timeline-label">Analýza dat a multimodální funkce</div>
+            <div class="timeline-time">1 hodina</div>
+          </div>
+          <div class="timeline-block tl-teal">
+            <div class="timeline-dot">M3</div>
+            <div class="timeline-label">Copilot v Edge – Turbo mód</div>
+            <div class="timeline-time">1 hodina</div>
+          </div>
+          <div class="timeline-block tl-teal">
+            <div class="timeline-dot">M4</div>
+            <div class="timeline-label">Strategie a implementace</div>
+            <div class="timeline-time">1 hodina</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-bottom:8px">Hlavní cíle kurzu</div>
+      <div class="objectives-grid" style="margin-bottom:40px">
+        <div class="objective-card"><div class="objective-num">01</div><p>Zvládnout pokročilé techniky prompt engineeringu (few-shot, chain-of-thought, negativní prompty) pro komplexní agendy veřejné správy.</p></div>
+        <div class="objective-card"><div class="objective-num">02</div><p>Umět pracovat s daty v chatu Copilotu (tabulky, jednoduché datové soubory bez citlivých údajů) a využít multimodální funkce pro práci s obrázky a grafy.</p></div>
+        <div class="objective-card"><div class="objective-num">03</div><p>Efektivně využívat Copilot v prohlížeči Edge včetně kontextu stránky, shrnutí videí a rozsáhlých webových textů.</p></div>
+        <div class="objective-card"><div class="objective-num">04</div><p>Navrhovat strategii zavádění Copilotu a dalších nástrojů (Power Automate, custom řešení) na úrovni odboru či celé organizace.</p></div>
+      </div>
+
+      <div class="modules-title">📂 Detailní obsah modulů – klikněte pro rozbalení</div>
+
+      <!-- AM1 -->
+      <div class="module-card" id="am1">
+        <div class="module-header" onclick="toggleModule('am1')">
+          <div class="module-num" style="background:var(--teal-light);color:var(--teal-dark)">1</div>
+          <div class="module-info">
+            <div class="module-title">Modul 1: Pokročilé techniky „Prompt Engineeringu"</div>
+            <div class="module-meta"><span class="module-time" style="background:var(--teal-light);color:var(--teal-dark)">⏱ 1 hodina</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník dovede navrhnout několik postupných promptů pro komplexní analytický úkol, využít příklady (few-shot) k „naučení" stylu a řídit krokové uvažování AI (chain-of-thought) pro strukturovanou analýzu procesů.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list" style="--blue:var(--teal)">
+              <li><strong>Zopakování základů a přechod k pokročilým technikám:</strong> Rychlé shrnutí metody 4 pilířů. Kde základní metoda nestačí a proč potřebujeme pokročilejší přístupy pro komplexní analytické úkoly.</li>
+              <li><strong>Few-shot prompting:</strong> Jak vložením 2–3 příkladů textů (shrnutí případu, zápis z porady, analýza) naučit Copilot preferovaný styl a formát organizace. Praktická ukázka: sada tří vzorových zápisů → Copilot generuje čtvrtý ve stejném stylu. Jak vytvořit a sdílet sadu few-shot příkladů v rámci týmu.</li>
+              <li><strong>Chain-of-thought (řetězové uvažování):</strong> Jak formulovat požadavky „Postupuj krok za krokem". Struktura: „Nejdříve shrň fakta → poté identifikuj problémy → navrhni 3 možnosti řešení → doporuč nejlepší variantu s odůvodněním." Příklady pro analýzu procesů: příjem žádosti, schvalování příspěvku, vyřizování odvolání.</li>
+              <li><strong>Negativní prompty – specifikace omezení:</strong> Co Copilot nemá dělat: „Nevymýšlej právní ustanovení, cokoliv nejasného označ jako hypotézu." „Nepoužívej obecné fráze, vždy uveď konkrétní kroky." „Nezjednodušuj na úkor přesnosti." Proč jsou negativní instrukce klíčové pro práci s právními a metodickými texty.</li>
+              <li><strong>Řetězové prompty pro redesign procesů:</strong> Jak rozdělit komplexní zadání do série propojených promptů. Příklad: redesign procesu vyřizování žádosti – mapování současného stavu → identifikace úzkých míst → návrh zjednodušení → plán implementace.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Společný scénář chain-of-thought:</strong> Celá skupina pracuje na redesignu konkrétního procesu (lektor vybere z agendy účastníků). Postupně procházejí kroky od mapování k doporučení – každý krok je samostatný prompt navazující na předchozí výstup.</li>
+              <li><strong>Few-shot workshop ve dvojicích:</strong> Každá dvojice vytvoří sadu tří vzorových zápisů „pro vedení" a otestuje, zda Copilot dokáže vygenerovat čtvrtý ve stejném stylu. Porovnání výsledků napříč skupinou.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Odevzdání promptového scénáře</strong>
+              <p>Účastník odevzdá krátkodobý promptový scénář (sekvence 3–5 kroků s popisem vstupu a očekávaného výstupu), který lze opakovaně použít v praxi – např. pro tvorbu analýz, přípravy zápisů nebo hodnocení projektů. Scénář musí využívat alespoň dvě pokročilé techniky.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AM2 -->
+      <div class="module-card" id="am2">
+        <div class="module-header" onclick="toggleModule('am2')">
+          <div class="module-num" style="background:var(--teal-light);color:var(--teal-dark)">2</div>
+          <div class="module-info">
+            <div class="module-title">Modul 2: Analýza dat a multimodální funkce</div>
+            <div class="module-meta"><span class="module-time" style="background:var(--teal-light);color:var(--teal-dark)">⏱ 1 hodina</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník umí nahrát do chatu Copilotu datový soubor (CSV/XLSX bez citlivých údajů), zadat dotazy na trendy a extrémy a využít schopnost AI interpretovat jednoduché grafy nebo organizační diagramy.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list" style="--blue:var(--teal)">
+              <li><strong>Práce s tabulkami a soubory v Copilotu:</strong> Jak nahrát soubor do chatu (CSV, XLSX) a jaké jsou technické limity. Typy dotazů: „Najdi nejvyšší/nejnižší hodnoty v sloupci X." „Jaký je trend za poslední 3 roky?" „Seřaď záznamy podle kritéria Y." „Najdi anomálie nebo výrazné odchylky." Jak interpretovat a kriticky zhodnotit výstupy AI analýzy.</li>
+              <li><strong>Ochrana dat při práci se soubory:</strong> Povinná anonymizace nebo syntetizace dat před nahráním. Co nesmí obsahovat soubor nahraný do Copilotu: rodná čísla, jména klientů, čísla dávek, identifikátory osob. Postup jak data před analýzou správně „vyčistit" nebo agregovat.</li>
+              <li><strong>Multimodální funkce – práce s obrázky:</strong> Využití AI pro popis a interpretaci organizačních schémat, procesních diagramů a jednoduchých grafů. Jak zadat obrázek s promptem: „Vysvětli tento diagram vedoucímu, který ho nezná." „Identifikuj slabá místa v tomto procesním schématu." „Porovnej tuto strukturu s popisem v dokumentu."</li>
+              <li><strong>Generování vizuálních podkladů:</strong> Možnosti generování ikon, ilustrací a schémat pomocí DALL-E v prostředí Copilotu. Licenční a etické aspekty používání AI-generovaných obrázků v úředních dokumentech. Kdy použít a kdy raději nevyužívat generativní grafiku.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Praktická práce s ukázkovým datovým souborem:</strong> Lektor připraví anonymizovaný nebo syntetický datový soubor (statistiky dávek, počty případů, časové řady). Účastníci zadávají vlastní dotazy, porovnávají výsledky a diskutují o rozdílech v interpretaci.</li>
+              <li><strong>Interpretace organizačního diagramu:</strong> Účastníci nahrají (nebo obdrží) organizační schéma a zkouší různé promptové přístupy pro jeho popis, zjednodušení a porovnání s textem.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Datové shrnutí</strong>
+              <p>Účastník vytvoří písemné shrnutí „co data říkají" v maximálně 10 větách na základě interakce s Copilotem a vlastního posouzení. Musí uvést: jaké dotazy použil, kde AI odpověděla přesně a kde musel sám korektorsky zasáhnout. Odevzdává jako součást portfolia kurzu.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AM3 -->
+      <div class="module-card" id="am3">
+        <div class="module-header" onclick="toggleModule('am3')">
+          <div class="module-num" style="background:var(--teal-light);color:var(--teal-dark)">3</div>
+          <div class="module-info">
+            <div class="module-title">Modul 3: Copilot v Edge – Turbo mód pro analytiky</div>
+            <div class="module-meta"><span class="module-time" style="background:var(--teal-light);color:var(--teal-dark)">⏱ 1 hodina</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník dokáže využít Copilot v Edge jako „AI prohlížeč" – shrnout rozsáhlé webové materiály, vyhodnotit informace napříč více otevřenými kartami a používat funkce Compose/Insight pro efektivní psaní strategických podkladů.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list" style="--blue:var(--teal)">
+              <li><strong>Pokročilý přehled funkcí Copilot v Edge:</strong> Shrnutí obsahu stránky – jak ovládat hloubku a zaměření shrnutí. Práce s více kartami – jak Copilot využívá kontext více otevřených stránek najednou. Přístup k historii browseru pro lepší personalizovaný kontext (kde je to povoleno správcem). Rychlý přepínač mezi „Chat" a „Compose" režimem v postranním panelu.</li>
+              <li><strong>Scénáře pro vedoucí a analytiky ve veřejné správě:</strong> Shrnutí dlouhých strategických materiálů: zprávy EU, národní strategie, výroční zprávy. Porovnání informací na stránkách různých ministerstev nebo mezinárodních institucí. Příprava podkladů z online zdrojů: metodiky WHO, OECD, zprávy Evropské komise. Rychlá orientace v legislativních portálech a databázích (epravo.cz, eur-lex.eu).</li>
+              <li><strong>Funkce Compose v postranním panelu – pokročilé použití:</strong> Generování textů v různých tónech: formální, neutrální, přátelský, přesvědčivý. Různé formáty: e-mail, shrnutí, odstavec, body, zpráva. Využití obsahu aktuální stránky jako kontextu pro generování nového textu. Srovnání různých verzí téhož textu – jak vybrat nejvhodnější.</li>
+              <li><strong>Funkce Insight/Quick Assist:</strong> Získávání rychlého kontextu o navštíveném webu. Identifikace organizace, účelu stránky, klíčových aktérů. Hodnocení důvěryhodnosti zdroje pomocí AI-asistovaného kontextu.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Srovnávací analýza webových zdrojů:</strong> Lektor vybere aktuální stránky MPSV, ÚZIS, ÚP ČR a případně EU. Účastníci je s pomocí Copilotu shrnují, porovnávají a identifikují klíčové rozdíly ve sdělení.</li>
+              <li><strong>Workshop Compose – více verzí téhož textu:</strong> Účastníci v Compose vytvářejí různé verze téhož strategického sdělení (formální dopis vedení vs. stručný interní e-mail vs. komuniké pro veřejnost). Diskuse o tom, která verze je vhodná pro konkrétní publikum.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Shrnutí webové stránky pro vedoucího</strong>
+              <p>Účastník připraví jedno krátké shrnutí webové stránky nebo online dokumentu (max. 5 vět pro vedoucího pracoviště), doloží jaké nastavení v Compose nebo chat funkci použil, a popíše co musel ručně opravit nebo doplnit. Výstup prezentuje spolužákovi a dostane zpětnou vazbu.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AM4 -->
+      <div class="module-card" id="am4">
+        <div class="module-header" onclick="toggleModule('am4')">
+          <div class="module-num" style="background:var(--teal-light);color:var(--teal-dark)">4</div>
+          <div class="module-info">
+            <div class="module-title">Modul 4: Strategie a implementace AI na pracovišti</div>
+            <div class="module-meta"><span class="module-time" style="background:var(--teal-light);color:var(--teal-dark)">⏱ 1 hodina</span></div>
+          </div>
+          <div class="module-toggle">▼</div>
+        </div>
+        <div class="module-body">
+          <div class="outcome-box">
+            <strong>🎯 Výstupní kompetence absolventa</strong>
+            <p>Účastník navrhne základní strategii zavádění Copilotu a dalších AI nástrojů na svém pracovišti, včetně identifikace hlavních bariér a návrhu konkrétních opatření ke zvýšení bezpečnosti a kompetencí uživatelů.</p>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Obsah modulu</div>
+            <ul class="content-list" style="--blue:var(--teal)">
+              <li><strong>Personalizace workflow – knihovna promptů:</strong> Tvorba vlastní sdílené knihovny „nejlepších promptů" pro agendu odboru. Standardizované prompty pro: shrnutí dokumentů, přípravu zápisů, odpovědi klientům, analýzy trendů. Jak udržovat a aktualizovat knihovnu promptů v čase. Sdílení a governance promptů v rámci organizace.</li>
+              <li><strong>Výhled na další automatizaci:</strong> Stručný přehled Power Automate – co je a co umožňuje. Možnosti integrace Copilotu do dalších systémů (SharePoint, Teams, Outlook). Tvorba custom řešení a „custom GPT" konceptů – kdy to dává smysl a jak se na to připravit. Důraz na bezpečnost, datovou správu a soulad s interními směrnicemi.</li>
+              <li><strong>Role vedení, IT a metodiků při zavádění AI:</strong> Proč nestačí samotné školení – nutnost kombinace vzdělávání, technických opatření a průběžného monitoringu. Tři pilíře úspěšného zavádění: kompetence uživatelů + technická infrastruktura + organizační kultura. Jak měřit úspěch zavedení AI nástrojů (KPIs, zpětná vazba, audit).</li>
+              <li><strong>Identifikace a překonání bariér:</strong> Technické bariéry: přístup k Edge a M365 licencím, uložení dat, síťová bezpečnost. Organizační bariéry: vnitřní směrnice, ochranné lhůty, schvalovací procesy. Lidské bariéry: nedůvěra, obavy z nahrazení, rezistence ke změně. Konkrétní návrhy, jak s každou bariérou pracovat – osvědčené přístupy z veřejného sektoru.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Metody a aktivity</div>
+            <ul class="activity-list">
+              <li><strong>Skupinový workshop – „mini strategie":</strong> Skupiny (3–4 účastníci ze stejné nebo podobné organizace) navrhují mini strategii pro svůj odbor/organizaci: definice cílů → výběr prioritních oblastí → návrh první vlny školení → identifikace technických požadavků → způsob měření výsledků.</li>
+              <li><strong>Diskusní kolo – sdílení dobré praxe:</strong> Každá skupina prezentuje svou mini strategii. Lektor komentuje, doplňuje konkrétní příklady z praxe veřejného sektoru (ČR i zahraničí) a identifikuje společné vzorce.</li>
+            </ul>
+          </div>
+          <div class="module-section">
+            <div class="module-section-title">Ověření znalostí</div>
+            <div class="verify-box">
+              <strong>📝 Koncept implementační strategie</strong>
+              <p>Každá skupina odevzdá krátký koncept strategie v rozsahu 1–2 stran, který může sloužit jako podklad pro interní diskusi ve vlastní organizaci. Dokument musí obsahovat: definované cíle, prioritní oblasti použití, návrh školení, identifikované bariéry a způsob jejich překonání, způsob měření výsledků. Výstup je hodnocen lektorem a lze jej přímo předložit vedení jako pracovní dokument.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-advanced -->
+
+  </div>
+</section>
+
+<!-- COMPETENCIES -->
+<section id="kompetence" class="skills-bg">
+  <div class="section-inner">
+    <div class="section-label">Výstupní kompetence</div>
+    <h2 class="section-title">Co absolventi kurzů zvládnou</h2>
+    <p class="section-sub">Přehled klíčových dovedností rozdělených podle kurzu. Kompetence jsou formulovány tak, aby odpovídaly požadavkům AKRIS na profil absolventa.</p>
+    <div class="two-col" style="margin-bottom:0">
+      <div class="info-card" style="border-top:4px solid var(--blue)">
+        <h4 style="color:var(--blue)">📘 AI gramotnost a Copilot v praxi (8 h)</h4>
+        <ul>
+          <li>Vysvětlí princip generativní AI a LLM</li>
+          <li>Bezpečně se přihlásí a ověří ochranu dat v Copilotu</li>
+          <li>Sestaví prompt metodou 4 pilířů (Role–Kontext–Úkol–Formát)</li>
+          <li>Vede iterativní dialog a koriguje výstupy AI</li>
+          <li>Sumarizuje PDF, webové stránky a videa v Edge</li>
+          <li>Ověřuje citace a odhaluje halucinace AI</li>
+          <li>Zjednodušuje úřední texty do srozumitelné formy</li>
+          <li>Tvoří šablony zápisů a odpovědí klientům</li>
+          <li>Popíše etická a právní rizika použití AI</li>
+        </ul>
+      </div>
+      <div class="info-card" style="border-top:4px solid var(--teal)">
+        <h4 style="color:var(--teal)">📗 AI analytik a designér procesů (4 h)</h4>
+        <ul>
+          <li>Navrhuje komplexní chain-of-thought sekvence promptů</li>
+          <li>Vytváří few-shot sady pro standardizaci stylu v organizaci</li>
+          <li>Nahrává a analyzuje datové soubory v Copilotu (bez citlivých dat)</li>
+          <li>Interpretuje grafy, schémata a vizuální dokumenty pomocí AI</li>
+          <li>Využívá Compose v Edge pro tvorbu textů v různých tónech</li>
+          <li>Porovnává informace z více webových zdrojů najednou</li>
+          <li>Navrhuje implementační strategii AI pro odbor/organizaci</li>
+          <li>Identifikuje a překonává bariéry zavádění AI ve VS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACCREDITATION -->
+<section id="akreditace" class="accreditation-bg">
+  <div class="section-inner">
+    <div class="section-label">Akreditace MPSV</div>
+    <h2 class="section-title">Vazba na akreditaci v systému AKRIS</h2>
+    <p class="section-sub">Oba kurzy jsou strukturovány tak, aby bylo možné příslušné části přímo přenést do žádosti o akreditaci v IS AKRIS dle zákona č. 108/2006 Sb., o sociálních službách.</p>
+    <div class="akris-grid">
+      <div class="akris-card">
+        <h4>📋 Profil absolventa</h4>
+        <p>Každý modul obsahuje přesnou formulaci výstupní kompetence ve formátu „Absolvent dokáže…" – přímo použitelnou jako sekci „Profil absolventa" v žádosti o akreditaci.</p>
+      </div>
+      <div class="akris-card">
+        <h4>📑 Profil vzdělávacího programu</h4>
+        <p>Sylabus včetně cílové skupiny, cílů, obsahu, metod a časového rozvržení odpovídá struktuře sekce „Profil programu" v AKRIS. Lze použít jako přímý podklad.</p>
+      </div>
+      <div class="akris-card">
+        <h4>✅ Způsob ověření znalostí</h4>
+        <p>Každý modul definuje konkrétní metodu ověření – kvízy, praktické úkoly, skupinové výstupy – v kombinaci průběžného a závěrečného hodnocení dle metodiky MPSV.</p>
+      </div>
+      <div class="akris-card">
+        <h4>👨‍🏫 Lektorský tým</h4>
+        <p>Kurzy vyžadují lektora s kombinací zkušeností v oblasti AI/IT a znalosti prostředí veřejné správy. Sylabus specifikuje technické i metodické požadavky na výuku.</p>
+      </div>
+      <div class="akris-card">
+        <h4>💻 Technické požadavky</h4>
+        <p>Microsoft Edge, přístup k Copilotu, přihlášení přes Entra ID (M365 pracovní účet), odpovídající licenční status pro Commercial Data Protection. Nutno zajistit před kurzem.</p>
+      </div>
+      <div class="akris-card">
+        <h4>📊 Monitoring a dokumentace</h4>
+        <p>U online nebo kombinované formy je třeba zohlednit požadavky na dokumentaci účasti a monitoring dle aktuálních metodických pokynů MPSV a AKRIS.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTES FOR LECTORS -->
+<section>
+  <div class="section-inner">
+    <div class="section-label">Pro lektory a organizátory</div>
+    <h2 class="section-title">Poznámky k realizaci kurzů</h2>
+    <div class="info-grid">
+      <div class="info-card" style="background:var(--blue-light);border-color:var(--blue)">
+        <h4>🖥️ Praktické ukázky</h4>
+        <ul>
+          <li>Pracujte s reálnými veřejně dostupnými dokumenty a weby MPSV</li>
+          <li>Ukázky provádějte živě, ne s předpřipravenými screenshoty</li>
+          <li>Mějte záložní plán pro případ výpadku internetu nebo API</li>
+        </ul>
+      </div>
+      <div class="info-card" style="background:var(--teal-light);border-color:var(--teal)">
+        <h4>🤝 Princip Human-in-the-Loop</h4>
+        <ul>
+          <li>Ve všech modulech zdůrazňujte: Copilot je „kopilot", ne „kapitán"</li>
+          <li>Konečná odpovědnost za obsah dokumentů je vždy na člověku</li>
+          <li>Výsledky AI je nutné vždy kriticky zkontrolovat</li>
+        </ul>
+      </div>
+      <div class="info-card" style="background:var(--gold-light);border-color:var(--gold)">
+        <h4>⚙️ Technická příprava</h4>
+        <ul>
+          <li>Ověřte licenční stav účastníků před kurzem (Entra ID, M365)</li>
+          <li>Zkontrolujte přihlášení do Copilotu v chráněném režimu</li>
+          <li>Připravte záložní ukázkové soubory pro případy technických problémů</li>
+        </ul>
+      </div>
+      <div class="info-card" style="background:var(--green-light);border-color:var(--green)">
+        <h4>📏 Ověřování znalostí</h4>
+        <ul>
+          <li>Kombinujte průběžné i závěrečné hodnocení</li>
+          <li>Upřednostňujte praktické výstupy před teoretickými testy</li>
+          <li>Zpětnou vazbu sbírejte dle požadavků MPSV na akreditované programy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="kontakt" class="cta-section">
+  <h2>Připraveni začít?</h2>
+  <p>Kontaktujte nás pro přihlášení, organizaci kurzu pro celý tým nebo pro více informací o akreditaci a realizaci.</p>
+  <div class="cta-buttons">
+    <a href="mailto:aid4gold@gmail.com" class="btn-primary">Přihlásit se na kurz</a>
+    <a href="mailto:aid4gold@gmail.com" class="btn-outline">Dotaz k obsahu</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <strong>AI gramotnost a Copilot v praxi</strong> &nbsp;·&nbsp; Kurzy pro resort MPSV &nbsp;·&nbsp; Akreditace AKRIS dle zákona č. 108/2006 Sb.<br>
+  <span style="margin-top:8px;display:block">© 2026 · Obsah je chráněn autorskými právy · Vytvořeno s podporou Microsoft Copilot</span>
+</footer>
+
+<script>
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  function toggleModule(id) {
+    const card = document.getElementById(id);
+    const isOpen = card.classList.contains('open');
+    // close all in this tab
+    document.querySelectorAll('.tab-panel.active .module-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+  }
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  // Auto-open first module in each tab
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    const first = panel.querySelector('.module-card');
+    if (first) first.classList.add('open');
+  });
+</script>
+</body>
+</html>
