@@ -975,9 +975,11 @@
   function toggleModule(id) {
     const card = document.getElementById(id);
     const isOpen = card.classList.contains('open');
-    // close all in this tab
     document.querySelectorAll('.tab-panel.active .module-card').forEach(c => c.classList.remove('open'));
-    if (!isOpen) card.classList.add('open');
+    if (!isOpen) {
+      card.classList.add('open');
+      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    }
   }
 
   // Smooth scroll for nav links
