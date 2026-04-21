@@ -978,7 +978,10 @@
     document.querySelectorAll('.tab-panel.active .module-card').forEach(c => c.classList.remove('open'));
     if (!isOpen) {
       card.classList.add('open');
-      setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      setTimeout(() => {
+        const top = card.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }, 50);
     }
   }
 
